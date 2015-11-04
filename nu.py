@@ -38,16 +38,18 @@ x,y,z = output.expect[2],output.expect[3],output.expect[0]
 
 plt.figure()
 plt.subplot(211)
-plt.plot(I_exp,label='Collective Nuclear Spin')
-plt.ylabel(r'$<I_z>$',fontsize=16)
-plt.xlabel(r'Time')
+plt.title('Collective Nuclear Spin vs Time')
+plt.plot(I_exp)
+plt.ylabel(r'$<A_z>$ (Nuclear Spin)',fontsize=16)
+plt.xlabel(r'Time',fontsize=16)
 plt.legend()
 #plt.ylim([-1,1])
 
 plt.subplot(212)
-plt.plot(S_z/S_z[0],label='Electron Spin')
-plt.ylabel(r'$<S_z>$',fontsize=16)
-plt.xlabel(r'Time')
+plt.title('Electron Spin vs Time')
+plt.plot(S_z/S_z[0])
+plt.ylabel(r'$<S_z>$ (Electron Spin)',fontsize=16)
+plt.xlabel(r'Time',fontsize=16)
 plt.legend()
 #plt.ylim([-1,1])
 plt.tight_layout()
@@ -55,17 +57,20 @@ plt.show()
 
 states = output.states
 ent = np.zeros(N)
+ent1 = np.zeros(N)
 for i in range(N): 
     rho = ket2dm(states[i])
-    rho_A = rho.ptrace([1])
-    print rho_A
+    rho_A = rho.ptrace([0])
+    #rho_B = rho.ptrace([1])
     ent[i] = entropy_vn(rho_A)
+    #ent1[i] = entropy_vn(rho_B)
 
 
 plt.plot(ent,label= r'Entanglement Entropy')
-plt.ylabel(r'Tr($\rho_A \log \rho_A )$')
-plt.xlabel('Time')
-plt.ylim([-1,1])
+#plt.plot(ent1,label= r'Entanglement Entropy')
+plt.ylabel(r'Tr($\rho_A \log \rho_A )$',fontsize=16)
+plt.xlabel('Time',fontsize=16)
+plt.ylim([0,1])
 plt.legend()
 plt.show()
 
