@@ -45,18 +45,26 @@ output = mesolve(H,psi0,tlist,[],[tensor(sigmax(),qeye(2)),tensor(sigmay(),qeye(
 x1,y1,z1 = output.expect[0],output.expect[1],output.expect[2]
 x2,y2,z2 = output.expect[3],output.expect[4],output.expect[5]
 
-plt.plot(z1)
-plt.plot(z2)
+plt.plot(z1,label='Electron 1')
+plt.plot(z2,label='Electron 2')
+plt.ylabel(r'Electron Spin $<S_z>$',fontsize=16)
+plt.xlabel('Time',fontsize=16)
+plt.legend()
 plt.show()
 
 states = output.states
 ent = np.zeros(N)
+ent1 = np.zeros(N)
 for i in range(N): 
     rho = ket2dm(states[i])
     rho_A = rho.ptrace(0)
+    #rho_B = rho.ptrace(1)
     ent[i] = entropy_vn(rho_A)
+    #ent1[i] = entropy_vn(rho_B)
+
 plt.plot(ent,label= r'Entanglement Entropy')
-plt.ylabel(r'Tr($\rho_A \log \rho_A )$')
+#plt.plot(ent1,label= r'Entanglement Entropy')
+plt.ylabel(r'Tr($\rho_A \log \rho_A )$',fontsize=16)
 plt.xlabel('Time')
 plt.ylim([-1,1])
 plt.legend()
