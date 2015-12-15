@@ -1,3 +1,5 @@
+#simulation of a single elctron in a magnetic field
+
 import numpy as np 
 from qutip import *
 import matplotlib.pyplot as plt
@@ -19,6 +21,7 @@ psi0 = psi0.unit()
 #non zero B produces Lamor precession
 B = -4
 
+#Hamiltonian of the system
 H = sigmaz()*sigmaz() + sigmax()*sigmax() + sigmay()*sigmay() + B*sigmaz()
 
 #N = number of simulation points
@@ -26,22 +29,28 @@ N = 25
 tlist = np.linspace(0,20,N)
 opt = solver.Options(store_states = True)
 output = mesolve(H,psi0,tlist,[],[sigmax(),sigmay(),sigmaz()],options=opt)
+
+#calculation of the expectation values of the components
 x,y,z = output.expect[0],output.expect[1],output.expect[2]
 
+#caluclation of the entanglement entropy
 states = output.states
 ent = np.zeros(N)
 for i in range(N): 
     rho = ket2dm(states[i])
     ent[i] = entropy_vn(rho)
 
+#plot of entropy vs time
 plt.plot(ent)
 plt.plot(ent,label= r'Von Neumann Entropy')
 plt.ylabel(r'Tr($\rho \log \rho )$')
 plt.xlabel('Time')
 plt.ylim([-1,1])
 plt.legend()
+plt.savefig('1e.png',format='png')
 plt.show()
 
+#3D bloch sphere animation
 fig = plt.figure()
 ax = Axes3D(fig,azim=-40,elev=30)
 sphere = Bloch(axes=ax)

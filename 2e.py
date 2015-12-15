@@ -1,47 +1,38 @@
+#simulation of a system of two electrons
+
 import numpy as np 
 from qutip import *
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
-#1e
-#a,b,c,d = 0,1,0,0
-#a,b,c,d = np.random.random_sample() + np.random.random_sample()*1j,np.random.random_sample() + np.random.random_sample()*1j,np.random.random_sample() + np.random.random_sample()*1j,np.random.random_sample() + np.random.random_sample()*1j
-#print a,b,c,d
-#psi0 = a * tensor(basis(2,0),basis(2,0)) + b * tensor(basis(2,0),basis(2,1)) +c * tensor(basis(2,1),basis(2,0)) +d * tensor(basis(2,1),basis(2,1)) 
-#psi0 = psi0.unit()
 
+#two electron state
 
 #maximally entangled state
 #psi0 = tensor(basis(2,1),basis(2,0)) - tensor(basis(2,0),basis(2,1))
 #psi0 = tensor(basis(2,1),basis(2,0)) + tensor(basis(2,0),basis(2,1))
 #psi0 = psi0.unit()
 
-#pure state z*z
+#pure state |10>
 psi0 = tensor(basis(2,1),basis(2,0))
 
-#pure state x*x
-#tmp1 = basis(2,0) + basis(2,1)
-#tmp1 = tmp1.unit()
-#tmp2 = basis(2,0) + basis(2,1)
-#tmp2 = tmp1.unit()
-#psi0 = tensor(tmp1,tmp2)
-
-
-
+#magnetic field
 B = 0.00
 #g = coupling constant
 g = 1
 #exchange Hamiltonian
 H = g * 0.25 * (tensor(sigmaz(),sigmaz()) + 0.5*tensor(sigmap(),sigmam()) + 0.5*tensor(sigmam(),sigmap())) + B * tensor(sigmaz(),qeye(2)) 
-print H
-print H.eigenstates()
-print "psi_0",psi0
+
 #N = number of simulation poitns
 N = 100
+
+#solving the systme
 tlist = np.linspace(0,50,N)
 opt = solver.Options(store_states = True)
 output = mesolve(H,psi0,tlist,[],[tensor(sigmax(),qeye(2)),tensor(sigmay(),qeye(2)),tensor(sigmaz(),qeye(2)),tensor(qeye(2),sigmax()),tensor(qeye(2),sigmay()),tensor(qeye(2),sigmaz())],options=opt)
+
+#calcualtion of expectation values of the spin components for the two electrons
 x1,y1,z1 = output.expect[0],output.expect[1],output.expect[2]
 x2,y2,z2 = output.expect[3],output.expect[4],output.expect[5]
 
@@ -50,11 +41,12 @@ plt.plot(z2,label='Electron 2')
 plt.ylabel(r'Electron Spin $<S_z>$',fontsize=16)
 plt.xlabel('Time',fontsize=16)
 plt.legend()
+plt.savefig('2e_spin.png',format='png')
 plt.show()
 
 states = output.states
 ent = np.zeros(N)
-ent1 = np.zeros(N)
+#ent1 = np.zeros(N)
 for i in range(N): 
     rho = ket2dm(states[i])
     rho_A = rho.ptrace(0)
@@ -68,6 +60,7 @@ plt.ylabel(r'Tr($\rho_A \log \rho_A )$',fontsize=16)
 plt.xlabel('Time')
 plt.ylim([-1,1])
 plt.legend()
+plt.savefig('2e_entropy.png',format='png')
 plt.show()
 
 #x,y,z = x1,y1,z1
