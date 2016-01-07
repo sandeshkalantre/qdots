@@ -59,6 +59,7 @@ I_exp = output.expect[1]
 x,y,z = output.expect[2],output.expect[3],output.expect[0]
 
 #plot of spins vs time
+
 plt.figure()
 plt.subplot(211)
 plt.title('Collective Nuclear Spin vs Time')
