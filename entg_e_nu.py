@@ -7,15 +7,16 @@ import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
 #one electron was interacting with 3 electrons each
-psi_nu1 = tensor(rand_ket(2).unit,rand_ket(2).unit,rand_ket(2).unit).unit()
-psi_nu2 = tensor(rand_ket(2).unit,rand_ket(2).unit,rand_ket(2).unit).unit()
+psi_nu1 = tensor(rand_ket(2).unit(),rand_ket(2).unit(),rand_ket(2).unit()).unit()
+psi_nu2 = tensor(rand_ket(2).unit(),rand_ket(2).unit(),rand_ket(2).unit()).unit()
 
 
 #initial electron spin state
 # |0> state = basis(2,0)
 # |1> state = basis(2,1)
 
-psi_e = (tensor(basis(2,0),basis(2,0)) + tensor(basis(2,1),basis(2,1))).unit()
+psi_e = (tensor(basis(2,0),basis(2,1)) + tensor(basis(2,1),basis(2,0))).unit()
+psi_e = tensor(basis(2,0),basis(2,1))
 
 #exchange Hamiltonian
 #qeye(2) -> 2 x 2 identity matrix
@@ -40,37 +41,60 @@ H_nu1e = tensor(sigmaz(),e_iden,I_z,nu_iden) + 0.5 * (tensor(sigmap(),e_iden,I_m
 H_nu2e = tensor(e_iden,sigmaz(),nu_iden,I_z) + 0.5 * (tensor(e_iden,sigmap(),nu_iden,I_m) + tensor(e_iden,sigmam(),nu_iden,I_p))
 
 #interaction of electron-electron
-H_ee = tensor(sigmaz(),sigmaz(),nu_iden,nu_iden) + 0.5 * (tensor(sigmap(),sigman()) + tensor(sigman(),sigmap()))
+H_ee = tensor(sigmaz(),sigmaz(),nu_iden,nu_iden) + 0.5 * (tensor(sigmap(),sigmam(),nu_iden,nu_iden) + tensor(sigmam(),sigmap(),nu_iden,nu_iden))
 
+H_e = tensor(sigmaz(),sigmaz()) + 0.5 * (tensor(sigmap(),sigmam()) + tensor(sigmam(),sigmap()))
 #paramters with control the strength of interaction
 #nu1 and e1
-g1 = 1.0
+g1 = 0.5
 #nu2 and e2
-g2 = 1.0
+g2 = 0.5
 
 #e and e
-ge = 10.0
+ge = 1.0
 H = g1 * H_nu1e +  g2 * H_nu2e + ge * H_ee
 
 #initial state 
-psi0 = tensor(psi_e,psi_nu1,psi_nu2)
-
+psi0 = tensor(psi_e,psi_nu1,psi_nu2).unit()
 
 #number of simulation points
 N = 100
-tlist = np.linspace(0,100,N)
+tlist = np.linspace(0,50,N)
 opt = solver.Options(store_states = True)
-output = mesolve(H,psi0,tlist,[],[tensor(sigmaz(),qeye(128)),tensor(eye(2),sigmaz(),qeye(64))],options=opt)
+output = mesolve(H,psi0,tlist,[],[tensor(sigmaz(),qeye(2),nu_iden,nu_iden),tensor(qeye(2),sigmaz(),nu_iden,nu_iden)],options=opt)
 
 #calculate the expectation values
 #spin of electron 1
-s1 = output.expect[0]
+z1 = output.expect[0]
 #spin of electron 2
-s2 = output.expect[1]
+z2 = output.expect[1]
 
 #plot of electron spins vs time
-plt.plot(s1)
-plt.plot(s2)
+plt.plot(z1,label='Electron 1')
+plt.plot(z2,label='Electron 2')
+plt.ylabel(r'Electron Spin $<S_z>$',fontsize=16)
+plt.xlabel('Time',fontsize=16)
+plt.legend()
+plt.savefig('e_spins_nu.png',format='png')
+plt.show()
+
+states = output.states
+ent = np.zeros(N)
+#ent1 = np.zeros(N)
+for i in range(N): 
+    rho = ket2dm(states[i])
+    rho_A = rho.ptrace([0])
+    print rho_A
+    ent[i] = entropy_vn(rho_A)
+
+#plot of entropy vs time
+plt.plot(ent,label= r'Entanglement Entropy')
+#plt.plot(ent1,label= r'Entanglement Entropy')
+plt.ylabel(r'Tr($\rho_E \log \rho_E )$',fontsize=16)
+plt.xlabel('Time',fontsize=16)
+plt.ylim([0,1])
+plt.legend()
+plt.savefig('e_entropy.png',format='png')
 plt.show()
 
 
