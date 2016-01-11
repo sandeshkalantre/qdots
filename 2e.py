@@ -10,12 +10,12 @@ from mpl_toolkits.mplot3d import Axes3D
 #two electron state
 
 #maximally entangled state
-#psi0 = tensor(basis(2,1),basis(2,0)) - tensor(basis(2,0),basis(2,1))
-#psi0 = tensor(basis(2,1),basis(2,0)) + tensor(basis(2,0),basis(2,1))
+#psi0 = tensor(basis(2,0),basis(2,0)) + tensor(basis(2,1),basis(2,1))
+psi0 = tensor(basis(2,1),basis(2,0)) - 1j*tensor(basis(2,0),basis(2,1))
 #psi0 = psi0.unit()
 
 #pure state |10>
-psi0 = tensor(basis(2,1),basis(2,0))
+#psi0 = tensor(basis(2,1),basis(2,0))
 
 #magnetic field
 B = 0.00
@@ -23,9 +23,10 @@ B = 0.00
 g = 1
 #exchange Hamiltonian
 H = g * 0.25 * (tensor(sigmaz(),sigmaz()) + 0.5*tensor(sigmap(),sigmam()) + 0.5*tensor(sigmam(),sigmap())) + B * tensor(sigmaz(),qeye(2)) 
-
+print H
+print H.eigenstates()
 #N = number of simulation poitns
-N = 100
+N = 1000
 
 #solving the systme
 tlist = np.linspace(0,50,N)

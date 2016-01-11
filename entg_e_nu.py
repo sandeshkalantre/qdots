@@ -16,7 +16,7 @@ psi_nu2 = tensor(rand_ket(2).unit(),rand_ket(2).unit(),rand_ket(2).unit()).unit(
 # |1> state = basis(2,1)
 
 psi_e = (tensor(basis(2,0),basis(2,1)) + tensor(basis(2,1),basis(2,0))).unit()
-psi_e = tensor(basis(2,0),basis(2,1))
+#psi_e = tensor(basis(2,0),basis(2,1))
 
 #exchange Hamiltonian
 #qeye(2) -> 2 x 2 identity matrix
