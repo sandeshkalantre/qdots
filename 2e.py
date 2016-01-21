@@ -22,7 +22,7 @@ B = 0.00
 #g = coupling constant
 g = 1
 #exchange Hamiltonian
-H = g * 0.25 * (tensor(sigmaz(),sigmaz()) + 0.5*tensor(sigmap(),sigmam()) + 0.5*tensor(sigmam(),sigmap())) + B * tensor(sigmaz(),qeye(2)) 
+H = g * (tensor(sigmaz(),sigmaz()) + 0.5*tensor(sigmap(),sigmam()) + 0.5*tensor(sigmam(),sigmap())) + B * tensor(sigmaz(),qeye(2)) 
 print H
 print H.eigenstates()
 #N = number of simulation poitns
